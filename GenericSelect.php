@@ -148,9 +148,13 @@ abstract class GenericSelect
         $connectionId = $this->getIdByConnection($connect);
         $written = @fwrite($connect, $this->_write[$connectionId], self::SOCKET_BUFFER_SIZE);
 
-        if ($written) {
-            $this->_write[$connectionId] = substr($this->_write[$connectionId], $written);
+        if (!$written) {
+            $this->close($connectionId);
+
+            return;
         }
+
+        $this->_write[$connectionId] = substr($this->_write[$connectionId], $written);
     }
 
     protected function _readFromBuffer($connectionId) {
